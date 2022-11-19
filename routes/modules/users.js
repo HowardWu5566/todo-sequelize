@@ -20,12 +20,24 @@ router.get('/register', (req, res) => {
 })
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
+  const errors = []
+  if (!name || !email || !passport || !confirmPassword) {
+    errors.push({ message: '所有欄位都是必填' })
+  }
+  if (password !== confirmPassword) {
+    errors.push({ message: '密碼與確認密碼不相符' })
+  }
+  if (errors.length) {
+    return res.render('register', {
+      errors, name, email, password, confirmPassword
+    })
+  }
   User.findOne({ where: { email } })
     .then(user => {
       if (user) {
-        console.log('User already exists')
+        errors.push({ message: '這個 Email 已經註冊過了' })
         return res.render('register', {
-          name, email, password, confirmPassword
+          errors, name, email, password, confirmPassword
         })
       }
       return bcrypt
@@ -42,6 +54,7 @@ router.post('/register', (req, res) => {
 
 router.get('/logout', (req, res) => {
   req.logout()
+  req.flash('success_msg', '已登出')
   res.redirect('/users/login')
 })
 

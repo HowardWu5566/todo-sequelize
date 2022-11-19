@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../../models')
-const todo = require('../../models/todo')
 const Todo = db.Todo
 
 router.get('/new', (req, res) => {
@@ -20,7 +19,6 @@ router.get('/:id/edit', (req, res) => {
   return Todo.findByPk(id)
     .then(todo => res.render('edit', { todo: todo.toJSON() }))
     .catch(err => console.log(err))
-
 })
 router.put('/:id', (req, res) => {
   const id = req.params.id
