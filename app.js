@@ -3,10 +3,10 @@ const exphbs = require('express-handlebars')
 const session = require('express-session')
 const methodOverride = require('method-override')
 const flash = require('connect-flash')
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const userPassport = require('./config/passport')
-const db = require('./models')
-const Todo = db.Todo
-const { authenticator } = require('./middleware/auth')
 const routes = require('./routes')
 
 const app = express()
@@ -15,7 +15,7 @@ const PORT = 3000
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 app.use(session({
-  secret: 'ThisIsMySecret',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: true
 }))
