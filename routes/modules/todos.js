@@ -15,36 +15,45 @@ router.post('/', (req, res) => {
 })
 
 router.get('/:id/edit', (req, res) => {
+  const UserId = req.user.id
   const id = req.params.id
-  return Todo.findByPk(id)
+  return Todo.findOne({ where: { UserId, id } })
     .then(todo => res.render('edit', { todo: todo.toJSON() }))
     .catch(err => console.log(err))
 })
 router.put('/:id', (req, res) => {
-  const id = req.params.id
   const UserId = req.user.id
+  const id = req.params.id
   const { name, isDone } = req.body
-  return Todo.findByPk(id)
+  return Todo.findOne({ where: { UserId, id } })
     .then(todo => {
       todo.name = name
       todo.isDone = isDone === 'on'
       return todo.save()
     })
-    .then(() => res.redirect(`/todos/${id}`))
+    .then(() => {
+      req.flash('success_msg', '修改成功')
+      res.redirect(`/todos/${id}`)
+    })
     .catch(err => console.log(err))
 })
 
 router.delete('/:id', (req, res) => {
+  const UserId = req.user.id
   const id = req.params.id
-  return Todo.findByPk(id)
+  return Todo.findOne({ where: { UserId, id } })
     .then(todo => todo.destroy())
-    .then(() => res.redirect('/'))
+    .then(() => {
+      req.flash('success_msg', '已刪除')
+      res.redirect('/')
+    })
     .catch(err => console.log(err))
 })
 
 router.get('/:id', (req, res) => {
+  const UserId = req.user.id
   const id = req.params.id
-  return Todo.findByPk(id)
+  return Todo.findOne({ where: { UserId, id } })
     .then(todo => res.render('detail', { todo: todo.toJSON() }))
     .catch(error => console.log(error))
 })
