@@ -29,7 +29,7 @@ module.exports = app => {
   })
   passport.deserializeUser((id, done) => {
     User.findByPk(id)
-      .the(user => {
+      .then(user => {
         user = user.toJSON()
         done(null, user)
       })
